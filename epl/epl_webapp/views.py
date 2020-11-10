@@ -3,31 +3,38 @@ from django.http import HttpResponse
 import os
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-import joblib
+from tensorflow.keras.models import load_model
+# import tensorflow as tf
+# from tensorflow import Graph
 
-model = joblib.load('./models/model.h5')
+# model_graph=Graph()
+# with model_graph.as_default():
+#   tf_session = tf.compat.v1.Session()
+#   with tf_session.as_default():
 
 
 def index(request):
-	context= {'a':'this is a context from epl_webapp'}
-	return render(request,'test.html',context)
+  context= {'a':'this is a context from epl_webapp'}
+  return render(request,'test.html',context)
 
 
 def predictor(request):
-	if request.method == "POST":
-		home=request.POST.get('home')
-		away=request.POST.get('away')
-		predictor(home,away)
-		context= {'home':home,'away':away}
-	return render(request,'test.html',context)	
+  if request.method == "POST":
+    home=request.POST.get('home')
+    away=request.POST.get('away')
+    a=predict(home,away)
+    context=a
+    # context= {'home':home,'away':away,'out1':a["1"]}
+  return render(request,'test.html',context)  
 
 
 def single_predict(df,home,away):
   filtered_data = df[(df.HomeTeam == home) & (df.AwayTeam == away)]
   input_data= filtered_data[['HS','AS','HST','AST','HF','AF','HY','AY','HR','AR','HC','AC','HTR']]
-  input_data.replace({"HTR":{'H':1,'A':2,'D':0}},inplace=True) 
-  Predicted=pd.DataFrame(model.predict(input_data))
-  classes=pd.DataFrame(model.predict_classes(input_data))
+  input_data.replace({"HTR":{'H':1,'A':2,'D':0}},inplace=True)
+  _prediction=model.predict(input_data)
+  Predicted=pd.DataFrame(_prediction)
+  classes=pd.DataFrame(_prediction)
   classes=classes.replace({0:{1:'H',2:'A',0:'D'}})
   Predicted['Predicted result']=classes[0]
   Predicted['HomeTeam']=home
@@ -36,24 +43,37 @@ def single_predict(df,home,away):
   return Predicted
 
 
-def predictor(home,away):
-  result=prediction[(prediction.HomeTeam == home) & (prediction.AwayTeam == away)]  #query in the dataframe (prediction) 
+def predict(home,away):
+  result=prediction[(prediction.HomeTeam == home) & (prediction.AwayTeam == away)]  #query in the dataframe (prediction)
   if int(result.shape[0]) > 0:
     index=result.index[0]
-    print("The actual FTR is ",(result['FTR'][index]))
+    FTR=result['FTR'][index]
     if (result['Predicted result'][index])=='H':
-      print("The predicted winner: ",home)
+      winner="home"
+  #     print("The predicted winner: ",home)
     else:
-      print("The predicted winner: ",away)
-  else:
-    print("Prediction using data from previous matches")
-    P = single_predict(old_data,home,away)
-    print(P['Predicted result'][0])
-    display(P)
+      winner="away"
+  #     print("The predicted winner: ",away)
+    output={'a':FTR,'b':winner}
 
+  else:
+  #   print("Prediction using data from previous matches")
+    P = single_predict(old_data,home,away)
+    winner=P['Predicted result'][0]
+    # winner=P['HST'][0]
+
+  #   print(P['Predicted result'][0])
+  #   display(P)
+    output={'b':winner}
+  # string="reached predict function"
+  return output
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+Path = os.path.join(BASE_DIR,"models","model.h5")
+model = load_model(Path,compile=False)
+
+
 r_path = os.path.join(BASE_DIR,"data","recent.csv")
 t_path = os.path.join(BASE_DIR,"data","tester.csv")
 old_data = pd.read_csv(r_path)
