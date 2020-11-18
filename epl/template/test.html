@@ -1,13 +1,14 @@
 <html>
 
-<h2>{{home}}  VS  {{away}}</h2>
+<h2>a={{a}}</h2>
+<h2>b={{b}}</h2>
 
 <h1>Select teams</h1>
 <form method="post" enctype="multipart/form-data" action="predictor">
 	{% csrf_token %}
 
-	<input type="text" name="home" id="home" value="Chealse">
-	<input type="text" name="away" id="away" value="Liverpool">
+	<input type="text" name="home" id="home" value="Liverpool">
+	<input type="text" name="away" id="away" value="Burnley">
 
 
 	<input type="submit" value="submit">
