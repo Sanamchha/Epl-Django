@@ -17,6 +17,14 @@ def index(request):
   context= {'a':'this is a context from epl_webapp'}
   return render(request,'index.html',context)
 
+def trial(request):
+  context= {'a':'this is a trial page after submit'}
+  if request.method == "POST":
+    home=request.POST.get('home')
+    away=request.POST.get('away')
+    context= {'a':home,'b':away}
+
+  return render(request,'test.html',context)
 
 def predictor(request):
   if request.method == "POST":
