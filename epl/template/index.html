@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <link href='/static/select2/dist/css/select2.min.css' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+        <script src='/static/jquery-3.2.1.min.js' type='text/javascript'></script>
+        <script src='/static/select2/dist/js/select2.min.js' type='text/javascript'></script>
+
+        <style type="text/css">
+        	.select-form {
+        		padding: 10px 5px;
+        		background-color: #f7f7f7 !important;
+        		color: #fff;
+        	}
+        </style>
+    </head>
+    <body>
+    <section style="padding: 100px 20px; background: url('/static/epl-bg.jpg'); object-fit: cover; height: 667px;">
+		<form method="post" enctype="multipart/form-data" action="predictor">
+			{% csrf_token %}
+		
+		<div class="container" style="border: 3px solid #fff; box-shadow: 0px 0px 10px 10px #fff; padding: 100px 20px; background-color: #f6f6f663; border-radius: 35px;">
+    		<div class="row">
+		    	<div class="col-6 d-flex justify-content-center">
+			        <select class="select-form-home" name='home' id='homeTeam' style='width: 200px;' onchange="$('#imageToSwaphome').attr('src', this.options[this.selectedIndex].id);">
+			            <option id="" value="">-- Select Away Team --</option>          
+			            <option id="/static/arsenal-logo.png" value="Arsenal">Arsenal</option>  
+			            <option id="/static/aston-villa-logo.png" value="Aston Villa">Aston Villa</option>          
+			            <option id="/static/manchester-united-logo.png" value="Manchester United">Manchester United</option>        
+			            <option id="/static/liverpool-logo.png" value="Liverpool">Liverpool</option>        
+			            <option id="/static/mancity-logo.jpg" value="Manchester City">Manchester City</option>        
+			        </select>
+		        </div>
+
+		        <div class="col-6 d-flex justify-content-center">
+			        <select class="select-form-away" name='away' id='awayTeam' style='width: 200px;' onchange="$('#imageToSwapaway').attr('src', this.options[this.selectedIndex].id);">
+			            <option id="" value="">-- Select Away Team --</option>          
+			            <option id="/static/arsenal-logo.png" value="Arsenal">Arsenal</option>  
+			            <option id="/static/aston-villa-logo.png" value="Aston Villa">Aston Villa</option>          
+			            <option id="/static/manchester-united-logo.png" value="Manchester United">Manchester United</option>        
+			            <option id="/static/liverpool-logo.png" value="Liverpool">Liverpool</option>        
+			            <option id="/static/mancity-logo.jpg" value="Manchester City">Manchester City</option> 
+			        </select>
+		        </div>
+		    </div>
+		    <div class="d-flex justify-content-center">
+		    	<button class="btn btn-primary" type="submit" style="padding: 10px 40px; margin-top: 30px;">Predict</button>
+		    </div>
+		</div>
+		</form>
+    </section>
+
+    <section class="epl-result">
+    	<div class="container" style="border: none; margin-top: -240px; background-color: #fff; padding: 40px; border-radius: 35px;">
+    		<div class="row">
+    			<div class="col-3">
+    				<h5 style="font-weight: 700; text-align: center;">Home</h5>
+    				<div class="d-flex justify-content-center">
+    					<img id="imageToSwaphome" src="/static/noname.png" width="120px">
+    				</div>
+    			</div>
+    			<div class="col-6" style="border: 3px solid #009970; padding: 20px; text-align: center;">
+					<h3>Home</h3>
+					<h3>{{a}}</h3>
+					<h3>{{b}}</h3>
+    			</div>
+    			<div class="col-3">
+    				<h5 style="font-weight: 700; text-align: center;">Away</h5>
+    				<div class="d-flex justify-content-center">
+    					<img id="imageToSwapaway" src="/static/noname.png" width="120px">
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    </section>
+
+    <script>
+        $(document).ready(function(){
+            
+            $("#homeTeam").select2();
+
+            $('#but_read').click(function(){
+                var username = $('#homeTeam option:selected').text();
+                var userid = $('#homeTeam').val();
+           
+                $('#result').html("id : " + userid + ", name : " + username);
+            });
+
+            $("#awayTeam").select2();
+
+            $('#but_read').click(function(){
+                var username = $('#awayTeam option:selected').text();
+                var userid = $('#awayTeam').val();
+           
+                $('#result').html("id : " + userid + ", name : " + username);
+            });
+        });
+    </script>
+    </body>
+</html>
