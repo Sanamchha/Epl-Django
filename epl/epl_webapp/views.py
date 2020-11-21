@@ -15,7 +15,7 @@ from tensorflow.keras.models import load_model
 
 def index(request):
   context= {'a':'this is a context from epl_webapp'}
-  return render(request,'test.html',context)
+  return render(request,'index.html',context)
 
 
 def predictor(request):
@@ -25,7 +25,7 @@ def predictor(request):
     a=predict(home,away)
     context=a
     # context= {'home':home,'away':away,'out1':a["1"]}
-  return render(request,'test.html',context)  
+  return render(request,'index.html',context)  
 
 
 def single_predict(df,home,away):
@@ -34,7 +34,10 @@ def single_predict(df,home,away):
   input_data.replace({"HTR":{'H':1,'A':2,'D':0}},inplace=True)
   _prediction=model.predict(input_data)
   Predicted=pd.DataFrame(_prediction)
-  classes=pd.DataFrame(_prediction)
+
+  classes=pd.DataFrame(model.predict_classes(input_data))
+
+  # classes=pd.DataFrame(_prediction)
   classes=classes.replace({0:{1:'H',2:'A',0:'D'}})
   Predicted['Predicted result']=classes[0]
   Predicted['HomeTeam']=home
@@ -64,7 +67,7 @@ def predict(home,away):
 
   #   print(P['Predicted result'][0])
   #   display(P)
-    output={'b':winner}
+    output={'a':"winner",'b':winner}
   # string="reached predict function"
   return output
 
